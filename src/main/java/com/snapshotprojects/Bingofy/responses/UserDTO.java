@@ -1,6 +1,7 @@
 package com.snapshotprojects.Bingofy.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.snapshotprojects.Bingofy.enums.ApplicationUserRole;
 
 public class UserDTO {
 	@JsonProperty("email_address")
@@ -9,8 +10,8 @@ public class UserDTO {
 	private String username;
 	@JsonProperty("password")
 	private String password;
-	@JsonProperty("isAdmin")
-	private boolean isAdmin;
+	@JsonProperty("role")
+	private ApplicationUserRole role;
 
 	public UserDTO() {
 	}
@@ -44,12 +45,11 @@ public class UserDTO {
 		return "UserDTO [email=" + email + ", username=" + username + ", password=" + password + "]";
 	}
 
-	public boolean isAdmin() {
-		return isAdmin;
+	public ApplicationUserRole getRole() {
+		return role;
 	}
 
-	public void setAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
+	public void setRole(ApplicationUserRole role) {
+		this.role = role;
 	}
-
 }

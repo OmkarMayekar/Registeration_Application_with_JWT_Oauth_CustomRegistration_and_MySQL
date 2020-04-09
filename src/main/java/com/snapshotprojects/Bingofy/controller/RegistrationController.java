@@ -1,9 +1,15 @@
 package com.snapshotprojects.Bingofy.controller;
 
+import java.util.Collections;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,12 +37,18 @@ public class RegistrationController {
 		System.out.println("registerUser method called!!" + userDto);
 		try {
 			ServiceResponse serviceReponseForRegisterUser = onBoardingSevice.registerUser(userDto.getEmail(),
-					userDto.getUsername(), userDto.getPassword(), userDto.isAdmin());
-			System.out.println("controller is Admin user value : " + userDto.isAdmin());
+					userDto.getUsername(), userDto.getPassword(), userDto.getRole());
+			System.out.println("controller is Admin user value : " + userDto.getRole());
 			return APIResponse.response(serviceReponseForRegisterUser.getStatusCode(), serviceReponseForRegisterUser);
 		} catch (ValidationException e) {
 			httpResponse.setStatus(e.getHttpCode());
 			return APIResponse.response(e.getHttpCode(), new ErrorResponse(e.getMessage()));
 		}
+	}
+
+	@GetMapping("/user")
+	public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
+		System.out.println("Principal is : " + principal);
+		return Collections.singletonMap("name", principal.getAttribute("name"));
 	}
 }

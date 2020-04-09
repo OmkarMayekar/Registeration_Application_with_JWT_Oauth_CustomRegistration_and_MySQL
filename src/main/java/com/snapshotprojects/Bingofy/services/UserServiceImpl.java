@@ -8,11 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.snapshotprojects.Bingofy.entities.ApplicationUser;
-import com.snapshotprojects.Bingofy.repositories.NonAdminUserRepository;
 import com.snapshotprojects.Bingofy.repositories.UserRepository;
 
 @Service
@@ -20,16 +18,10 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	UserRepository userRepository;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	NonAdminUserRepository nonAdminUserRepository;
-
-	@Autowired
-	public UserServiceImpl(PasswordEncoder passwordEncoder) {
+	public UserServiceImpl() {
 		System.out.println("UserServiceImpl constructor initialized");
-		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,6 +17,8 @@ import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.snapshotprojects.Bingofy.enums.ApplicationUserRole;
 
 @SuppressWarnings("serial")
 @Entity
@@ -26,7 +30,8 @@ public class ApplicationUser implements UserDetails {
 	private String username;
 	private String password;
 	private String email;
-	private boolean isAdmin;
+	@Enumerated(EnumType.STRING)
+	private ApplicationUserRole role;
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "user_authorities")
 	private Set<SimpleGrantedAuthority> grantedAuthorities;
@@ -35,7 +40,7 @@ public class ApplicationUser implements UserDetails {
 	private boolean isCredentialsNonExpired;
 	private boolean isEnabled;
 
-	public ApplicationUser(Long id, String username, String password, String email, boolean isAdmin,
+	public ApplicationUser(Long id, String username, String password, String email, ApplicationUserRole role,
 			Set<SimpleGrantedAuthority> grantedAuthorities, boolean isAccountNonExpired, boolean isAccountNonLocked,
 			boolean isCredentialsNonExpired, boolean isEnabled) {
 		super();
@@ -43,7 +48,7 @@ public class ApplicationUser implements UserDetails {
 		this.username = username;
 		this.password = password;
 		this.email = email;
-		this.isAdmin = isAdmin;
+		this.role = role;
 		this.grantedAuthorities = grantedAuthorities;
 		this.isAccountNonExpired = isAccountNonExpired;
 		this.isAccountNonLocked = isAccountNonLocked;
@@ -134,26 +139,28 @@ public class ApplicationUser implements UserDetails {
 		this.email = email;
 	}
 
-	public boolean isAdmin() {
-		return isAdmin;
+	public ApplicationUserRole getRole() {
+		return role;
 	}
 
-	public void setAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
+	public void setRole(ApplicationUserRole role) {
+		this.role = role;
 	}
 
 	@Override
 	public String toString() {
 		return "ApplicationUser [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email
-				+ ", isAdmin=" + isAdmin + ", grantedAuthorities=" + grantedAuthorities + ", isAccountNonExpired="
+				+ ", role=" + role + ", grantedAuthorities=" + grantedAuthorities + ", isAccountNonExpired="
 				+ isAccountNonExpired + ", isAccountNonLocked=" + isAccountNonLocked + ", isCredentialsNonExpired="
 				+ isCredentialsNonExpired + ", isEnabled=" + isEnabled + ", getId()=" + getId() + ", getUsername()="
 				+ getUsername() + ", getPassword()=" + getPassword() + ", isAccountNonExpired()="
 				+ isAccountNonExpired() + ", isAccountNonLocked()=" + isAccountNonLocked()
 				+ ", isCredentialsNonExpired()=" + isCredentialsNonExpired() + ", isEnabled()=" + isEnabled()
-				+ ", getAuthorities()=" + getAuthorities() + ", getEmail()=" + getEmail() + ", isAdmin()=" + isAdmin()
+				+ ", getAuthorities()=" + getAuthorities() + ", getEmail()=" + getEmail() + ", getRole()=" + getRole()
 				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
 				+ "]";
 	}
+
+	
 
 }

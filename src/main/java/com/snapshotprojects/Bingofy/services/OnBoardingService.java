@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.snapshotprojects.Bingofy.entities.ApplicationUser;
+import com.snapshotprojects.Bingofy.enums.ApplicationUserRole;
 import com.snapshotprojects.Bingofy.enums.HttpStatusCode;
 import com.snapshotprojects.Bingofy.enums.ResponseFlag;
 import com.snapshotprojects.Bingofy.exceptions.ValidationException;
@@ -25,30 +26,15 @@ public class OnBoardingService {
 	@Autowired
 	ServiceResponse response;
 
-	public ServiceResponse registerUser(String email, String username, String password, boolean isAdmin)
+	public ServiceResponse registerUser(String email, String username, String password, ApplicationUserRole role)
 			throws ValidationException {
 		try {
 			System.out.println(
-					"Paramters is in Service +" + email + " Username " + " password " + password + " admin " + isAdmin);
+					"Paramters is in Service +" + email + " Username " + " password " + password + " role " + role);
 			ApplicationUser existingUser = userRepository.findByEmail(email);
 			if (existingUser == null) {
 				String encodedPassword = passwordEncoder.encode(password);
-				ApplicationUser applicationUser = new ApplicationUser();
-				applicationUser.setUsername(username);
-				applicationUser.setPassword(encodedPassword);
-				applicationUser.setEmail(email);
-				applicationUser.setAccountNonExpired(true);
-				applicationUser.setAccountNonLocked(true);
-				applicationUser.setCredentialsNonExpired(true);
-				applicationUser.setEnabled(true);
-				applicationUser.setAdmin(isAdmin);
-				if (isAdmin == true) {
-					applicationUser.setGrantedAuthorities(
-							com.snapshotprojects.Bingofy.enums.ApplicationUserRole.ADMIN.getGrantedAuthorities());
-				} else {
-					applicationUser.setGrantedAuthorities(
-							com.snapshotprojects.Bingofy.enums.ApplicationUserRole.NONADMIN.getGrantedAuthorities());
-				}
+				ApplicationUser applicationUser = createApplicationUser(email, username, role, encodedPassword);
 				System.out.println("application user Object being saved is :" + applicationUser.toString());
 				userService.save(applicationUser);
 				response = buildSuccessServiceResponse();
@@ -64,6 +50,26 @@ public class OnBoardingService {
 			response = buildErrorServiceResponse(e);
 		}
 		return response;
+	}
+
+	private ApplicationUser createApplicationUser(String email, String username, ApplicationUserRole role,
+			String encodedPassword) {
+		ApplicationUser applicationUser = new ApplicationUser();
+		applicationUser.setUsername(username);
+		applicationUser.setPassword(encodedPassword);
+		applicationUser.setEmail(email);
+		applicationUser.setAccountNonExpired(true);
+		applicationUser.setAccountNonLocked(true);
+		applicationUser.setCredentialsNonExpired(true);
+		applicationUser.setEnabled(true);
+		applicationUser.setRole(role);
+		/*
+		 * if (role == true) { applicationUser.setGrantedAuthorities(
+		 * ApplicationUserRole.ADMIN.getGrantedAuthorities()); } else {
+		 * applicationUser.setGrantedAuthorities(
+		 * ApplicationUserRole.NONADMIN.getGrantedAuthorities()); }
+		 */
+		return applicationUser;
 	}
 
 	public ServiceResponse buildSuccessServiceResponse() {
