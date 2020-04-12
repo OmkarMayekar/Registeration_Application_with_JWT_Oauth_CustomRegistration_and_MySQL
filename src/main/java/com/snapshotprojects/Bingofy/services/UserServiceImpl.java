@@ -50,12 +50,12 @@ public class UserServiceImpl implements UserService {
 			System.out.println("User found in database : " + user);
 			if (user == null) {
 				throw new UsernameNotFoundException("Invalid username or password");
-			}
-
+			}else 
+			{
 			grantedAuthorities = new HashSet<>();
 			for (GrantedAuthority role : user.getAuthorities()) {
 				grantedAuthorities.add(new SimpleGrantedAuthority(role.getAuthority()));
-				// System.out.println("granted AUTHORITIES : " + grantedAuthorities);
+			}
 			}
 		} catch (Exception e) {
 			System.out.println("Exception occurred in retrieving user : " + e);

@@ -1,7 +1,11 @@
 package com.snapshotprojects.Bingofy.entities;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -12,6 +16,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.snapshotprojects.Bingofy.enums.ApplicationUserRole;
 
 @SuppressWarnings("serial")
-@Entity
+@Entity(name = "application_user")
 @Table(name = "application_user")
 public class ApplicationUser implements UserDetails {
 	@Id
@@ -32,6 +38,10 @@ public class ApplicationUser implements UserDetails {
 	private String email;
 	@Enumerated(EnumType.STRING)
 	private ApplicationUserRole role;
+	private String uuid;
+	@OneToMany(targetEntity=ApplicationUser.class, fetch=FetchType.EAGER)
+	private List<String> userList = new ArrayList<>();
+	private HashSet<String> grantAcessTo = new HashSet<>();
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "user_authorities")
 	private Set<SimpleGrantedAuthority> grantedAuthorities;
@@ -41,6 +51,7 @@ public class ApplicationUser implements UserDetails {
 	private boolean isEnabled;
 
 	public ApplicationUser(Long id, String username, String password, String email, ApplicationUserRole role,
+			String uuid, List<String> userList, HashSet<String> grantAcessTo,
 			Set<SimpleGrantedAuthority> grantedAuthorities, boolean isAccountNonExpired, boolean isAccountNonLocked,
 			boolean isCredentialsNonExpired, boolean isEnabled) {
 		super();
@@ -49,6 +60,9 @@ public class ApplicationUser implements UserDetails {
 		this.password = password;
 		this.email = email;
 		this.role = role;
+		this.uuid = uuid;
+		this.userList = userList;
+		this.grantAcessTo = grantAcessTo;
 		this.grantedAuthorities = grantedAuthorities;
 		this.isAccountNonExpired = isAccountNonExpired;
 		this.isAccountNonLocked = isAccountNonLocked;
@@ -144,23 +158,52 @@ public class ApplicationUser implements UserDetails {
 	}
 
 	public void setRole(ApplicationUserRole role) {
+		this.setGrantedAuthorities(role.getGrantedAuthorities());
 		this.role = role;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public HashSet<String> getGrantAcessTo() {
+		return grantAcessTo;
+	}
+
+	public void setGrantAcessTo(HashSet<String> grantAcessTo) {
+		this.grantAcessTo = grantAcessTo;
+	}
+
+	public List<String> getUserList() {
+		return userList;
+	}
+
+	public void setUserList(List<String> userList) {
+		this.userList = userList;
+	}
+
+	@PrePersist
+	public void autofill() {
+		this.setUuid(UUID.randomUUID().toString());
 	}
 
 	@Override
 	public String toString() {
 		return "ApplicationUser [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email
-				+ ", role=" + role + ", grantedAuthorities=" + grantedAuthorities + ", isAccountNonExpired="
-				+ isAccountNonExpired + ", isAccountNonLocked=" + isAccountNonLocked + ", isCredentialsNonExpired="
-				+ isCredentialsNonExpired + ", isEnabled=" + isEnabled + ", getId()=" + getId() + ", getUsername()="
-				+ getUsername() + ", getPassword()=" + getPassword() + ", isAccountNonExpired()="
-				+ isAccountNonExpired() + ", isAccountNonLocked()=" + isAccountNonLocked()
-				+ ", isCredentialsNonExpired()=" + isCredentialsNonExpired() + ", isEnabled()=" + isEnabled()
-				+ ", getAuthorities()=" + getAuthorities() + ", getEmail()=" + getEmail() + ", getRole()=" + getRole()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
-				+ "]";
+				+ ", role=" + role + ", uuid=" + uuid + ", userList=" + userList + ", grantAcessTo=" + grantAcessTo
+				+ ", grantedAuthorities=" + grantedAuthorities + ", isAccountNonExpired=" + isAccountNonExpired
+				+ ", isAccountNonLocked=" + isAccountNonLocked + ", isCredentialsNonExpired=" + isCredentialsNonExpired
+				+ ", isEnabled=" + isEnabled + ", getId()=" + getId() + ", getUsername()=" + getUsername()
+				+ ", getPassword()=" + getPassword() + ", isAccountNonExpired()=" + isAccountNonExpired()
+				+ ", isAccountNonLocked()=" + isAccountNonLocked() + ", isCredentialsNonExpired()="
+				+ isCredentialsNonExpired() + ", isEnabled()=" + isEnabled() + ", getAuthorities()=" + getAuthorities()
+				+ ", getEmail()=" + getEmail() + ", getRole()=" + getRole() + ", getUuid()=" + getUuid()
+				+ ", getGrantAcessTo()=" + getGrantAcessTo() + ", getUserList()=" + getUserList() + ", getClass()="
+				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
 	}
-
-	
 
 }

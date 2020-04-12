@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -50,7 +51,7 @@ public class JwtUserNamePasswordAuthenticationFilter extends UsernamePasswordAut
 
 		} catch (Exception e) {
 			System.out.println("Exception in attemptAuthentication method : " + e);
-			throw new RuntimeException(e);
+			throw new InternalAuthenticationServiceException("Authentication_Failure");
 		}
 
 	}

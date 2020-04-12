@@ -8,8 +8,8 @@ import java.util.Set;
 public enum ResponseFlag {
 
 	REGISTRATION_SUCCESSFULL("User registered successfully"),
-	REGISTRATION_UNSUCCESSFULL("User was not registered successfully"), USER_ALREADY_EXISTS("User already exists"),
-	EXT_BAD_REQUEST("External error - Bad request"), EXT_CALLS_EXCEEDED("External error - calls Exceeded"),
+	REGISTRATION_UNSUCCESSFULL("User was not registered successfully"),USER_WITH_SAME_USERNAME_ALREADY_EXISTS("User with same username already exists"), USER_WITH_SAME_EMAIL_ALREADY_EXISTS("User with same e-mail already exists"),
+	EXT_BAD_REQUEST("External error - Bad request"), INVALID_CREDS("Invalid_credentials"),USERS_GIVEN_ACCESS("Users are given access to ownser's list"),USERS_NOT_GIVEN_ACCESS("Users are given access to ownser's list"),
 	EXT_TECH_ISSUE("External error - PIPL technical issue"), INTERNAL_ERROR("Internal error"), UNKNOWN("UNKNOWN");
 
 	private String serviceResponseFlag;

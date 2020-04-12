@@ -7,10 +7,17 @@ public enum HttpStatusCode {
 
 	// validation
 	VALIDATION_FAILED(407),
-
+	
+	NOT_ACCEPTABLE(406),
 	// FAIL
-	INTERNAL_SERVER_ERROR(500), REQUEST_TIMEOUT(504);
-
+	INTERNAL_SERVER_ERROR(500),
+	
+	REQUEST_TIMEOUT(504),
+	
+	CONFLICT(409),
+	
+	CREATED(201);
+	
 	private int ordinal;
 
 	HttpStatusCode(int ordinal) {

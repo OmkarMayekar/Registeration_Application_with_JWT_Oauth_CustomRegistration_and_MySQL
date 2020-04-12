@@ -14,8 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.snapshotprojects.Bingofy.enums.ApplicationUserPermission;
-import com.snapshotprojects.Bingofy.enums.ApplicationUserRole;
 import com.snapshotprojects.Bingofy.jwt.JwtConfig;
 import com.snapshotprojects.Bingofy.jwt.JwtTokenVerifer;
 import com.snapshotprojects.Bingofy.jwt.JwtUserNamePasswordAuthenticationFilter;
@@ -24,7 +22,7 @@ import com.snapshotprojects.Bingofy.services.UserService;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
+public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter/* implements WebMvcConfigurer */{
 
 	private PasswordEncoder passwordEncoder;
 	private UserService applicationUserService;
@@ -45,12 +43,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		System.out.println("configure(http) called");
 		http.csrf().disable().authorizeRequests().and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.addFilter(new JwtUserNamePasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-				.addFilterAfter(new JwtTokenVerifer(secretKey, jwtConfig),
-						JwtUserNamePasswordAuthenticationFilter.class)
-				.authorizeRequests().antMatchers("/*", "index", "/css/*", "/js/*").permitAll().anyRequest()
-				.authenticated().and().oauth2Login().loginPage("/login.html");
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+		.addFilter(new JwtUserNamePasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
+		.addFilterAfter(new JwtTokenVerifer(secretKey, jwtConfig),
+				JwtUserNamePasswordAuthenticationFilter.class)
+		.authorizeRequests().antMatchers("/*","/registration/*", "index", "/css/*", "/js/*").permitAll().anyRequest()
+		.authenticated().and().oauth2Login().loginPage("/login.html");
 	}
 
 	@Bean
@@ -67,4 +65,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 		System.out.println("configure(auth) called");
 		auth.authenticationProvider(daoAuthenticationProvider());
 	}
+	/*
+	 * @Override public void addViewControllers(ViewControllerRegistry registry) {
+	 * registry.addViewController("/oauthLogin").setViewName("oauthLogin");
+	 * registry.setOrder(Ordered.HIGHEST_PRECEDENCE); }
+	 */
 }

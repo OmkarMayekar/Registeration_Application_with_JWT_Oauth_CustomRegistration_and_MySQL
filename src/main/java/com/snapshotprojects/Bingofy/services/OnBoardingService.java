@@ -11,6 +11,7 @@ import com.snapshotprojects.Bingofy.enums.ResponseFlag;
 import com.snapshotprojects.Bingofy.exceptions.ValidationException;
 import com.snapshotprojects.Bingofy.repositories.UserRepository;
 import com.snapshotprojects.Bingofy.responses.ServiceResponse;
+import com.snapshotprojects.Bingofy.request.UserDTO;
 
 @Service
 public class OnBoardingService {
@@ -26,25 +27,36 @@ public class OnBoardingService {
 	@Autowired
 	ServiceResponse response;
 
-	public ServiceResponse registerUser(String email, String username, String password, ApplicationUserRole role)
+	public ServiceResponse registerUser(UserDTO userDto)
 			throws ValidationException {
 		try {
-			System.out.println(
-					"Paramters is in Service +" + email + " Username " + " password " + password + " role " + role);
-			ApplicationUser existingUser = userRepository.findByEmail(email);
-			if (existingUser == null) {
+			String email = userDto.getEmail();
+			String username = userDto.getUsername();
+			String password = userDto.getPassword();
+			ApplicationUserRole role = userDto.getRole();
+			System.out.println("Paramters is in Service +" + email + " Username " + username + " password " + password
+					+ " role " + role);
+			ApplicationUser existingUserWithEmail = userRepository.findByEmail(email);
+			ApplicationUser existingUserWithUsername = userRepository.findByUsername(username);
+			if (existingUserWithEmail == null) {
 				String encodedPassword = passwordEncoder.encode(password);
 				ApplicationUser applicationUser = createApplicationUser(email, username, role, encodedPassword);
 				System.out.println("application user Object being saved is :" + applicationUser.toString());
 				userService.save(applicationUser);
 				response = buildSuccessServiceResponse();
-			} else {
-				System.out.println("existing User Found====>" + existingUser);
-				response.setStatusCode(HttpStatusCode.VALIDATION_FAILED.getOrdinal());
-				response.setserviceFlag(ResponseFlag.USER_ALREADY_EXISTS);
-				response.setErrorMessage("User already exists");
-				return response;
 			}
+			if (existingUserWithEmail != null) {
+				System.out.println("existing User with E-mail Found====>" + existingUserWithEmail);
+				response.setStatusCode(HttpStatusCode.NOT_ACCEPTABLE.getOrdinal());
+				response.setserviceFlag(ResponseFlag.USER_WITH_SAME_EMAIL_ALREADY_EXISTS);
+				response.setErrorMessage("Not Acceptable :: User with same e-mail already exists");
+			} else if (existingUserWithUsername != null) {
+				System.out.println("existing User with Username Found====>" + existingUserWithEmail);
+				response.setStatusCode(HttpStatusCode.NOT_ACCEPTABLE.getOrdinal());
+				response.setserviceFlag(ResponseFlag.USER_WITH_SAME_USERNAME_ALREADY_EXISTS);
+				response.setErrorMessage("Not Acceptable :: User with same username already exists");
+			}
+			return response;
 		} catch (Exception e) {
 			System.out.println("Error in service :: registerUser method : " + e);
 			response = buildErrorServiceResponse(e);
@@ -88,5 +100,14 @@ public class OnBoardingService {
 			response.setErrorMessage("Input Validation Error");
 		}
 		return response;
+	}
+
+	public void validateUserRegisterationRequest(UserDTO userDTO) throws ValidationException {
+		System.out.println("validateUserRegisterationRequest called !!");
+		if (null == userDTO.getUsername() || userDTO.getUsername().isEmpty()) {
+			throw new ValidationException(HttpStatusCode.VALIDATION_FAILED.getOrdinal(), "Username is mandatory!");
+		} else if (null == userDTO.getEmail() || userDTO.getEmail().isEmpty()) {
+			throw new ValidationException(HttpStatusCode.VALIDATION_FAILED.getOrdinal(), "Email is mandatory");
+		}
 	}
 }
