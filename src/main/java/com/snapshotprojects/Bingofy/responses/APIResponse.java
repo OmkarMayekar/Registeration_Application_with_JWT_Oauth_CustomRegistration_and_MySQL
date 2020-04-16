@@ -17,7 +17,7 @@ public class APIResponse<T> {
 		this.code = code;
 	}
 
-	public static <T> APIResponse response(int code, T data) {
+	public static <T> APIResponse<T> response(int code, T data) {
 		return new APIResponse<T>(code, data);
 	}
 
