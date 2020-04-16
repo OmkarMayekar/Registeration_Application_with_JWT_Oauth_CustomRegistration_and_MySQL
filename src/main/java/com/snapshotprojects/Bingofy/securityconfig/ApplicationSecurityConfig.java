@@ -32,7 +32,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter/* im
 	@Autowired
 	public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, UserService applicationUserService,
 			SecretKey secretKey, JwtConfig jwtConfig) {
-		System.out.println("ApplicationSecurityConfig constructor initialized");
 		this.passwordEncoder = passwordEncoder;
 		this.applicationUserService = applicationUserService;
 		this.secretKey = secretKey;
@@ -41,7 +40,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter/* im
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		System.out.println("configure(http) called");
 		http.csrf().disable().authorizeRequests().and().sessionManagement()
 		.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 		.addFilter(new JwtUserNamePasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
@@ -53,7 +51,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter/* im
 
 	@Bean
 	public DaoAuthenticationProvider daoAuthenticationProvider() {
-		System.out.println("daoAuthenticationProvider called");
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setPasswordEncoder(passwordEncoder);
 		provider.setUserDetailsService(applicationUserService);
@@ -62,9 +59,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter/* im
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		System.out.println("configure(auth) called");
 		auth.authenticationProvider(daoAuthenticationProvider());
 	}
+	
 	/*
 	 * @Override public void addViewControllers(ViewControllerRegistry registry) {
 	 * registry.addViewController("/oauthLogin").setViewName("oauthLogin");

@@ -1,16 +1,25 @@
 package com.snapshotprojects.Bingofy.enums;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 public enum ResponseFlag {
 
 	REGISTRATION_SUCCESSFULL("User registered successfully"),
-	REGISTRATION_UNSUCCESSFULL("User was not registered successfully"),USER_WITH_SAME_USERNAME_ALREADY_EXISTS("User with same username already exists"), USER_WITH_SAME_EMAIL_ALREADY_EXISTS("User with same e-mail already exists"),
-	EXT_BAD_REQUEST("External error - Bad request"), INVALID_CREDS("Invalid_credentials"),USERS_GIVEN_ACCESS("Users are given access to ownser's list"),USERS_NOT_GIVEN_ACCESS("Users are given access to ownser's list"),
-	EXT_TECH_ISSUE("External error - PIPL technical issue"), INTERNAL_ERROR("Internal error"), UNKNOWN("UNKNOWN");
+	REGISTRATION_UNSUCCESSFULL("User was not registered successfully"),
+	USER_WITH_SAME_USERNAME_ALREADY_EXISTS("User with same username already exists"),
+	USER_WITH_SAME_EMAIL_ALREADY_EXISTS("User with same e-mail already exists"),
+	USERS_GIVEN_ACCESS("Users are given access to ownser's list"),
+	USERS_NOT_GIVEN_ACCESS("Users are given access to ownser's list"),
+	USER_NOT_PRESENT("User is not found in database"),
+	EXT_BAD_REQUEST("External error - Bad request"),
+	INVALID_CREDS("Invalid_credentials"),
+	ITEMS_UPDATED("Items requeted were updated to users list"),
+	ITEMS_WERE_NOT_UPDATED("Items requested were not updated to users list"),
+	ITEMS_RETRIVED_SUCCESSFULLY("Items retrived successfully"),
+	ITEMS_NOT_RETRIVED_SUCCESSFULLY("Items not retrived successfully"),
+	EXT_TECH_ISSUE("External error - PIPL technical issue"),
+	INTERNAL_ERROR("Internal error"),
+	UNKNOWN("UNKNOWN");
 
 	private String serviceResponseFlag;
 

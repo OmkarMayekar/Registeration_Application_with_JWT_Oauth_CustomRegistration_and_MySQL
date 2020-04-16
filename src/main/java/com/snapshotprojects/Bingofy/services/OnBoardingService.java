@@ -1,5 +1,7 @@
 package com.snapshotprojects.Bingofy.services;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,8 +12,9 @@ import com.snapshotprojects.Bingofy.enums.HttpStatusCode;
 import com.snapshotprojects.Bingofy.enums.ResponseFlag;
 import com.snapshotprojects.Bingofy.exceptions.ValidationException;
 import com.snapshotprojects.Bingofy.repositories.UserRepository;
-import com.snapshotprojects.Bingofy.responses.ServiceResponse;
 import com.snapshotprojects.Bingofy.request.UserDTO;
+import com.snapshotprojects.Bingofy.responses.ServiceResponse;
+import com.snapshotprojects.Bingofy.utilityclasses.CustomResponseUtilityClass;
 
 @Service
 public class OnBoardingService {
@@ -23,7 +26,10 @@ public class OnBoardingService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
+	
+	@Autowired
+	CustomResponseUtilityClass customResponseUtilityClass;
+	
 	@Autowired
 	ServiceResponse response;
 
@@ -43,7 +49,7 @@ public class OnBoardingService {
 				ApplicationUser applicationUser = createApplicationUser(email, username, role, encodedPassword);
 				System.out.println("application user Object being saved is :" + applicationUser.toString());
 				userService.save(applicationUser);
-				response = buildSuccessServiceResponse();
+				response = customResponseUtilityClass.buildSuccessResponseForOnBoardingService();
 			}
 			if (existingUserWithEmail != null) {
 				System.out.println("existing User with E-mail Found====>" + existingUserWithEmail);
@@ -59,7 +65,7 @@ public class OnBoardingService {
 			return response;
 		} catch (Exception e) {
 			System.out.println("Error in service :: registerUser method : " + e);
-			response = buildErrorServiceResponse(e);
+			response = customResponseUtilityClass.buildErrorResponseForOnBoardingService(e);
 		}
 		return response;
 	}
@@ -70,36 +76,13 @@ public class OnBoardingService {
 		applicationUser.setUsername(username);
 		applicationUser.setPassword(encodedPassword);
 		applicationUser.setEmail(email);
+		applicationUser.setUserList(new ArrayList<String>());
 		applicationUser.setAccountNonExpired(true);
 		applicationUser.setAccountNonLocked(true);
 		applicationUser.setCredentialsNonExpired(true);
 		applicationUser.setEnabled(true);
 		applicationUser.setRole(role);
-		/*
-		 * if (role == true) { applicationUser.setGrantedAuthorities(
-		 * ApplicationUserRole.ADMIN.getGrantedAuthorities()); } else {
-		 * applicationUser.setGrantedAuthorities(
-		 * ApplicationUserRole.NONADMIN.getGrantedAuthorities()); }
-		 */
 		return applicationUser;
-	}
-
-	public ServiceResponse buildSuccessServiceResponse() {
-		response.setStatusCode(HttpStatusCode.SUCCESS.getOrdinal());
-		response.setserviceFlag(ResponseFlag.REGISTRATION_SUCCESSFULL);
-		response.setErrorMessage("User registered sucessfully");
-		return response;
-	}
-
-	public ServiceResponse buildErrorServiceResponse(Exception e) {
-		response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getOrdinal());
-		response.setserviceFlag(ResponseFlag.REGISTRATION_UNSUCCESSFULL);
-		if (e.getClass().toString().trim() == "class javax.validation.ConstraintViolationException") {
-			response.setErrorMessage("Internal Server Error");
-		} else {
-			response.setErrorMessage("Input Validation Error");
-		}
-		return response;
 	}
 
 	public void validateUserRegisterationRequest(UserDTO userDTO) throws ValidationException {

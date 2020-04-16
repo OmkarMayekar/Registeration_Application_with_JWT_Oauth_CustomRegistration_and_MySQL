@@ -13,23 +13,20 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.google.common.collect.Sets;
 
 public enum ApplicationUserRole {
-	NONADMIN(Sets.newHashSet()), ADMIN(Sets.newHashSet(COURSE_READ, COURSE_WRITE, NONADMIN_READ, NONADMIN_WRITE)),
+	NONADMIN(Sets.newHashSet(NONADMIN_READ, COURSE_READ)), ADMIN(Sets.newHashSet(COURSE_READ, COURSE_WRITE, NONADMIN_READ, NONADMIN_WRITE)),
 	ADMINTRAINEE(Sets.newHashSet(COURSE_READ, NONADMIN_READ));
 
 	private final Set<ApplicationUserPermission> permissions;
 
 	ApplicationUserRole(Set<ApplicationUserPermission> permissions) {
-		System.out.println(" constructor of ApplicationUserRole initialized");
 		this.permissions = permissions;
 	}
 
 	public Set<ApplicationUserPermission> getPermissions() {
-		System.out.println("getPermission of ApplicationUserRole called");
 		return permissions;
 	}
 
 	public Set<SimpleGrantedAuthority> getGrantedAuthorities() {
-		System.out.println("getGrantedAuthorities called!!");
 		Set<SimpleGrantedAuthority> permissions = getPermissions().stream()
 				.map(permission -> new SimpleGrantedAuthority(permission.getPermission())).collect(Collectors.toSet());
 		permissions.add(new SimpleGrantedAuthority("Role_" + this.name()));

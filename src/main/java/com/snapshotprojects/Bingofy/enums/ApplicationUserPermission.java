@@ -7,12 +7,10 @@ public enum ApplicationUserPermission {
 	private final String permission;
 
 	ApplicationUserPermission(String permission) {
-		System.out.println("ApplicationUserPermission constructor initialized");
 		this.permission = permission;
 	}
 
 	public String getPermission() {
-		System.out.println("getPermission called from ApplicationUserPermission");
 		return permission;
 	}
 }

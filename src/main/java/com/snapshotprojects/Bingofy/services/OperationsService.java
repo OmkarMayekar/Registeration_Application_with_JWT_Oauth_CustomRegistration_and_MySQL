@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 
 import com.snapshotprojects.Bingofy.entities.ApplicationUser;
 import com.snapshotprojects.Bingofy.enums.HttpStatusCode;
-import com.snapshotprojects.Bingofy.enums.ResponseFlag;
 import com.snapshotprojects.Bingofy.exceptions.ValidationException;
 import com.snapshotprojects.Bingofy.repositories.UserRepository;
 import com.snapshotprojects.Bingofy.responses.ServiceResponse;
+import com.snapshotprojects.Bingofy.utilityclasses.CustomResponseUtilityClass;
 import com.snapshotprojects.Bingofy.utilityclasses.ListOfAccessingUsersEmail;
 
 @Service
@@ -27,25 +27,27 @@ public class OperationsService {
 
 	@Autowired
 	UserRepository userRepository;
-
+	
+	@Autowired
+	CustomResponseUtilityClass customResponseUtilityClass;
+	
 	@Autowired
 	ServiceResponse response;
 
-	public ServiceResponse assignAnotherUserAccessList(ListOfAccessingUsersEmail listAccessignUserEmail) {
+	public ServiceResponse assignAnotherUserToAccessList(ListOfAccessingUsersEmail listAccessignUserEmail) {
 		try {
 			String ownerUserEmail = listAccessignUserEmail.getEmail();
 			ArrayList<String> accessingUsersEmailList = listAccessignUserEmail.getListAccessignUserEmail();
 			ApplicationUser ownerUser = null;
 			ArrayList<String> accessingUsersUUIDList = new ArrayList<>();
 			HashSet<String> ownerUserGrantAccessToSet = new HashSet<>();
+			HashSet<String> ownerUserGrantAccessToSetBeforeUpdatingValues = new HashSet<>();
 			System.out.println("ownerUserEmail ===>" + ownerUserEmail);
 			System.out.println("acessingUserEmailList===>" + accessingUsersEmailList);
-
 			if (ownerUserEmail != null) {
 				// GETTING THE OWNER USER OBJECT FROM REQUEST AND SEARCHING IN DB.
 				ownerUser = userRepository.findByEmail(ownerUserEmail);
 			}
-			
 			if(!accessingUsersEmailList.isEmpty()) 
 			{
 				ListIterator<String> itr = accessingUsersEmailList.listIterator();
@@ -57,17 +59,24 @@ public class OperationsService {
 					accessingUsersUUIDList.add(accessingUser.getUuid());
 				}
 			}
-			
-			System.out.println("ACCESSING_USERS_UUID_LIST =====> " + accessingUsersUUIDList);
-
+			System.out.println("ACCESSING_USERS_WHO_ARE_NOW_GIVEN_ACCESS_TO_OWNER'S_LIST_ARE::UUID_LIST =====> " + accessingUsersUUIDList);
 			ownerUserGrantAccessToSet = ownerUser.getGrantAcessTo();
+			ownerUserGrantAccessToSetBeforeUpdatingValues = ownerUserGrantAccessToSet;
+			System.out.println("ownerUserGrantAccessToSetBeforeUpdatingValues===>"+ownerUserGrantAccessToSetBeforeUpdatingValues);
 			ownerUserGrantAccessToSet.addAll(accessingUsersUUIDList);
 			ownerUser.setGrantAcessTo(ownerUserGrantAccessToSet);
-			userRepository.save(ownerUser);
-			response = buildSuccessServiceResponse();
+			//Update the GrantAccess Set of Owner
+			ApplicationUser updatedApplicationUser = userRepository.save(ownerUser);
+			HashSet<String> ownerUserGrantAccessToSetAfterUpdatingValues = updatedApplicationUser.getGrantAcessTo();
+			System.out.println("ownerUserGrantAccessToSetAfterUpdatingValues===>"+ownerUserGrantAccessToSetAfterUpdatingValues);
+			if(ownerUserGrantAccessToSetAfterUpdatingValues.toArray().equals(ownerUserGrantAccessToSetBeforeUpdatingValues.toArray())) 
+			{
+				System.out.println("OWNER USER LIST SHARING WAS UPDATED AND HE NEEDS TO BE NOTIFIED");
+			}
+			response = customResponseUtilityClass.buildSuccessResponseForOperationsService();
 		} catch (Exception e) {
 			System.out.println("Error in service :: assignAnotherUserAccessList method : " + e);
-			response = buildErrorServiceResponse(e);
+			response = customResponseUtilityClass.buildErrorResponseForOperationsService();
 		}
 		return response;
 	}
@@ -118,20 +127,4 @@ public class OperationsService {
 					"username is mandatory!");
 		}
 	}		
-	
-	public ServiceResponse buildSuccessServiceResponse() {
-		response.setStatusCode(HttpStatusCode.CREATED.getOrdinal());
-		response.setserviceFlag(ResponseFlag.USERS_GIVEN_ACCESS);
-		response.setErrorMessage("Users are given access to ownser's list sucessfully");
-		return response;
-	}
-
-	public ServiceResponse buildErrorServiceResponse(Exception e) {
-		response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getOrdinal());
-		response.setserviceFlag(ResponseFlag.USERS_NOT_GIVEN_ACCESS);
-		response.setErrorMessage("Users are not given access to ownser's list");
-		return response;
-	}
-
-
 }

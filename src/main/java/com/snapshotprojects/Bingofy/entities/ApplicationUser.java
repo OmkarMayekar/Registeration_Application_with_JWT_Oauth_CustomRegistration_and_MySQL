@@ -16,7 +16,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
@@ -39,7 +38,8 @@ public class ApplicationUser implements UserDetails {
 	@Enumerated(EnumType.STRING)
 	private ApplicationUserRole role;
 	private String uuid;
-	@OneToMany(targetEntity=ApplicationUser.class, fetch=FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Column(name = "user_list")
 	private List<String> userList = new ArrayList<>();
 	private HashSet<String> grantAcessTo = new HashSet<>();
 	@ElementCollection(fetch = FetchType.EAGER)

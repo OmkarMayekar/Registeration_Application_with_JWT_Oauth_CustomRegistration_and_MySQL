@@ -39,24 +39,20 @@ public class RegistrationController {
 
 	@ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public Map<HttpStatusCode, String> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-		System.out.println("handleMethodArgumentNotValid called");
-		Map<HttpStatusCode, String> errors = new HashMap<>();
+	public APIResponse<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+		Map<HttpStatusCode, Object> errors = new HashMap<>();
 		ex.getBindingResult().getFieldErrors()
 				.forEach(error -> errors.put(HttpStatusCode.VALIDATION_FAILED, error.getDefaultMessage()));
-		return errors;
+		return APIResponse.response(HttpStatusCode.VALIDATION_FAILED.getOrdinal(), errors);
 	}
 
 	@PostMapping
 	@ResponseBody
 	public APIResponse<?> registerUser(@Valid @RequestBody UserDTO userDto, HttpServletResponse httpResponse,
 			HttpServletRequest request) {
-		System.out.println("registerUser method called!!" + userDto);
 		try {
 			onBoardingService.validateUserRegisterationRequest(userDto);
-			
 			ServiceResponse serviceReponseForRegisterUser = onBoardingService.registerUser(userDto);
-
 			return APIResponse.response(serviceReponseForRegisterUser.getStatusCode(), serviceReponseForRegisterUser);
 		} catch (ValidationException e) {
 			httpResponse.setStatus(e.getHttpCode());
@@ -66,7 +62,6 @@ public class RegistrationController {
 
 	@GetMapping("/oauth")
 	public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
-		System.out.println("Principal is : " + principal);
 		return Collections.singletonMap("name", principal.getAttribute("name"));
 	}
 }

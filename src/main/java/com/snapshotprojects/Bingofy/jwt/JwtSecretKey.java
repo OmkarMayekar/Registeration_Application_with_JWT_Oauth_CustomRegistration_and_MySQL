@@ -15,13 +15,11 @@ public class JwtSecretKey {
 
 	@Autowired
 	public JwtSecretKey(JwtConfig jwtConfig) {
-		System.out.println("JwtSecretKey constructor initialized");
 		this.jwtConfig = jwtConfig;
 	}
 
 	@Bean
 	public SecretKey secretKey() {
-		System.out.println("secretKey() called from JwtSecretKey");
 		return Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes());
 	}
 }

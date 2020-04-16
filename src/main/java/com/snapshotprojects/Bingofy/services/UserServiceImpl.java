@@ -21,7 +21,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	public UserServiceImpl() {
-		System.out.println("UserServiceImpl constructor initialized");
 	}
 
 	@Override
@@ -32,17 +31,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ApplicationUser save(ApplicationUser applicationUser) {
 		return userRepository.save(applicationUser);
-		/*
-		 * NonAdminUser nonAdminUser = new NonAdminUser();
-		 * nonAdminUser.setName(applicationUser.getUsername());
-		 * nonAdminUser.setPassword(applicationUser.getPassword());
-		 * nonAdminUserRepository.save(nonAdminUser);
-		 */
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		System.out.println("loadUserByName method called in UserServiceImpl and username is : " + username);
 		ApplicationUser user = null;
 		Set<GrantedAuthority> grantedAuthorities = null;
 		try {

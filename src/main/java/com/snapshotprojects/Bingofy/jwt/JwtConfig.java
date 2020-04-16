@@ -12,7 +12,6 @@ public class JwtConfig {
 	private Integer tokenExpirationAfterDays;
 
 	public JwtConfig() {
-		System.out.println("jwtconfig constructor initialized");
 	}
 
 	public String getSecretKey() {

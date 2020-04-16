@@ -31,16 +31,13 @@ public class JwtTokenVerifer extends OncePerRequestFilter {
 	private JwtConfig jwtConfig;
 
 	public JwtTokenVerifer(SecretKey secretKey, JwtConfig jwtConfig) {
-		System.out.println("JwtTokenVerifier constructor initialized");
 		this.secretKey = secretKey;
 		this.jwtConfig = jwtConfig;
 	}
 
-	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		System.out.println("doFilterInternal called from JwtTokenverifier");
 		String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
 
 		if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {

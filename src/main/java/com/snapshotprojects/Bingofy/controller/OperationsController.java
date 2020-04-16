@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,17 +31,14 @@ public class OperationsController {
 	OperationsService operationsService;
 
 	@PostMapping("/addUserToMyList")
+	@PreAuthorize("hasAuthority('nonadmin:write')")
 	@ResponseBody
 	public APIResponse<?> addUserToMyList(@Valid @RequestBody ListOfAccessingUsersEmail listAccessignUserEmail,
-			HttpServletResponse httpResponse, HttpServletRequest request) throws Exception{
-		System.out.println("addUserToMyList method called!!" + "listAccessignUserEmail" + listAccessignUserEmail
-				+ " ownerUserEmail " + listAccessignUserEmail.getEmail());
+			HttpServletResponse httpResponse, HttpServletRequest request) throws Exception {
 		try {
 			operationsService.validateAddUserToMyListRequest(listAccessignUserEmail, listAccessignUserEmail.getEmail());
-
 			ServiceResponse serviceReponseForassignListToAnotherUsers = operationsService
-					.assignAnotherUserAccessList(listAccessignUserEmail);
-
+					.assignAnotherUserToAccessList(listAccessignUserEmail);
 			return APIResponse.response(serviceReponseForassignListToAnotherUsers.getStatusCode(),
 					serviceReponseForassignListToAnotherUsers);
 
@@ -49,24 +47,20 @@ public class OperationsController {
 			return APIResponse.response(e.getHttpCode(), new ErrorResponse(e.getMessage()));
 		}
 	}
-	
+
 	@PostMapping("/getUserGrantAccessList")
 	@ResponseBody
+	@PreAuthorize("hasAuthority('nonadmin:write')")
 	public APIResponse<?> getUserGrantAccessList(@RequestBody ApplicationUser username,
-			HttpServletResponse httpResponse, HttpServletRequest request) throws Exception{
-		System.out.println("getUserGrantAccessList method called!!" + " username " + username.getUsername());
+			HttpServletResponse httpResponse, HttpServletRequest request) throws Exception {
 		try {
-			/* Validate the request */
 			operationsService.validategetUserGrantAccessListRequest(username.getUsername());
-
-			/* Call the service */
-			Map<String,String> setOfGrantAccessToUUIDS  = operationsService.getApplicationUserGrantAccessToList(username.getUsername());
-			if(!setOfGrantAccessToUUIDS.isEmpty()) {
-				System.out.println("setOfGrantAccessToUUIDS is not Empty");
-				return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(),setOfGrantAccessToUUIDS);
-			}else {
-				System.out.println("setOfGrantAccessToUUIDS is Empty");
-				return APIResponse.response(HttpStatusCode.CONFLICT.getOrdinal(),setOfGrantAccessToUUIDS);
+			Map<String, String> setOfGrantAccessToUUIDS = operationsService
+					.getApplicationUserGrantAccessToList(username.getUsername());
+			if (!setOfGrantAccessToUUIDS.isEmpty()) {
+				return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), setOfGrantAccessToUUIDS);
+			} else {
+				return APIResponse.response(HttpStatusCode.CONFLICT.getOrdinal(), setOfGrantAccessToUUIDS);
 			}
 		} catch (ValidationException e) {
 			httpResponse.setStatus(e.getHttpCode());

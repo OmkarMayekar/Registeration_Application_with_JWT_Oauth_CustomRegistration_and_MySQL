@@ -1,19 +1,18 @@
 package com.snapshotprojects.Bingofy.request;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.snapshotprojects.Bingofy.enums.ApplicationUserRole;
 
 public class UserDTO {
-	@NotNull(message = "email cannot be missing or empty")
+	@NotNull(message = "e-mail input incorrect or e-mail cannot be missing/empty")
 	@JsonProperty("email_address")
 	private String email;
-	@NotNull(message = "username cannot be missing or empty")
+	@NotNull(message = "username input incorrect or username cannot be missing/empty")
 	@JsonProperty("username")
 	private String username;
-	@NotNull(message = "password cannot be missing or empty")
+	@NotNull(message = "password input incorrect or password cannot be missing/empty")
 	@JsonProperty("password")
 	private String password;
 	@JsonProperty("role")

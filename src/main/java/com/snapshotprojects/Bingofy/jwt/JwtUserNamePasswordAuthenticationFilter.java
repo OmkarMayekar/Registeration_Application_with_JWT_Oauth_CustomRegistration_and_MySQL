@@ -14,7 +14,6 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +29,6 @@ public class JwtUserNamePasswordAuthenticationFilter extends UsernamePasswordAut
 
 	public JwtUserNamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig,
 			SecretKey secretKey) {
-		System.out.println("JwtUserNamePasswordAuthenticationFilter constructor initialized");
 		this.authenticationManager = authenticationManager;
 		this.jwtConfig = jwtConfig;
 		this.secretKey = secretKey;

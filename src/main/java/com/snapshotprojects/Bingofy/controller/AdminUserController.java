@@ -19,14 +19,12 @@ public class AdminUserController {
 	@GetMapping
 	@PreAuthorize("hasAuthority('nonadmin:read')")
 	public List<String> getAllStudents() {
-		System.out.println("getAllElements");
 		return STUDENTS;
 	}
 
 	@DeleteMapping(path = "{non_admin_user}")
 	@PreAuthorize("hasAuthority('nonadmin:write')")
 	public void deleteStudent(@PathVariable("non_admin_user") Integer non_admin_user) {
-		System.out.println("deleteStudent");
 		System.out.println(non_admin_user);
 	}
 }
