@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ import com.snapshotprojects.Bingofy.responses.ErrorResponse;
 import com.snapshotprojects.Bingofy.responses.ServiceResponse;
 import com.snapshotprojects.Bingofy.services.OperationsService;
 import com.snapshotprojects.Bingofy.utilityclasses.ListOfAccessingUsersEmail;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/operations")
 public class OperationsController {

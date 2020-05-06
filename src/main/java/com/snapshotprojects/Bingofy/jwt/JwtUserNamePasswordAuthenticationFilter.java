@@ -56,7 +56,7 @@ public class JwtUserNamePasswordAuthenticationFilter extends UsernamePasswordAut
 
 	/*
 	 * This method will add a new token for the first time which will be then valid
-	 * for 10 days
+	 * for 1 days
 	 */
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,

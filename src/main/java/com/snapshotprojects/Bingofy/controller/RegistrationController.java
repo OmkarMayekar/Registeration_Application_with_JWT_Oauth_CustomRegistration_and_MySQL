@@ -1,7 +1,9 @@
 package com.snapshotprojects.Bingofy.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +33,7 @@ import com.snapshotprojects.Bingofy.responses.ErrorResponse;
 import com.snapshotprojects.Bingofy.responses.ServiceResponse;
 import com.snapshotprojects.Bingofy.services.OnBoardingService;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/registration")
 public class RegistrationController {
@@ -51,6 +55,7 @@ public class RegistrationController {
 	public APIResponse<?> registerUser(@Valid @RequestBody UserDTO userDto, HttpServletResponse httpResponse,
 			HttpServletRequest request) {
 		try {
+			System.out.println("UserDTO=======>"+userDto);
 			onBoardingService.validateUserRegisterationRequest(userDto);
 			ServiceResponse serviceReponseForRegisterUser = onBoardingService.registerUser(userDto);
 			return APIResponse.response(serviceReponseForRegisterUser.getStatusCode(), serviceReponseForRegisterUser);
@@ -62,6 +67,15 @@ public class RegistrationController {
 
 	@GetMapping("/oauth")
 	public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
+		System.out.println("registration controller value is : "+principal);
 		return Collections.singletonMap("name", principal.getAttribute("name"));
+	}
+
+	@GetMapping("/demo")
+	public List<String> getDemoData() {
+		System.out.println("getDemoData controller called");
+		List<String> l = new ArrayList<String>();
+		l.add("Item");
+		return l;
 	}
 }

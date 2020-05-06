@@ -19,7 +19,9 @@ public enum ResponseFlag {
 	ITEMS_NOT_RETRIVED_SUCCESSFULLY("Items not retrived successfully"),
 	EXT_TECH_ISSUE("External error - PIPL technical issue"),
 	INTERNAL_ERROR("Internal error"),
-	UNKNOWN("UNKNOWN");
+	UNKNOWN("UNKNOWN"),
+	DATABASE_UPDATED("Database Updated Successfully"),
+	JSON_RETRIVED("Json Retrived");
 
 	private String serviceResponseFlag;
 

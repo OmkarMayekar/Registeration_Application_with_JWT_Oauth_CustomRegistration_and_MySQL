@@ -14,7 +14,7 @@ public class TemplateController {
 		System.out.println("getLoginView() controller called");
 		return "login";
 	}
-
+	
 	@GetMapping("/api/courses")
 	public String getCourses() {
 		return "courses";

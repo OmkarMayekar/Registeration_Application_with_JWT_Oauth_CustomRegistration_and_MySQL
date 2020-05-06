@@ -21,6 +21,20 @@ public class CustomResponseUtilityClass {
 		response.setErrorMessage("User not found in database");
 		return response;
 	}
+	
+	public ServiceResponse buildJsonObjectSavedResponse() {
+		response.setStatusCode(HttpStatusCode.SUCCESS.getOrdinal());
+		response.setserviceFlag(ResponseFlag.DATABASE_UPDATED);
+		response.setErrorMessage("");
+		return response;
+	}
+	
+	public ServiceResponse buildJsonObjectRetrivedResponse() {
+		response.setStatusCode(HttpStatusCode.SUCCESS.getOrdinal());
+		response.setserviceFlag(ResponseFlag.JSON_RETRIVED);
+		response.setErrorMessage("");
+		return response;
+	}
 
 	public ServiceResponse buildSuccessReponseForItemsUpdation() {
 		response.setStatusCode(HttpStatusCode.SUCCESS.getOrdinal());
@@ -46,7 +60,7 @@ public class CustomResponseUtilityClass {
 	public ServiceResponse buildSuccessResponseForOnBoardingService() {
 		response.setStatusCode(HttpStatusCode.SUCCESS.getOrdinal());
 		response.setserviceFlag(ResponseFlag.REGISTRATION_SUCCESSFULL);
-		response.setErrorMessage("User registered sucessfully");
+		response.setErrorMessage("");
 		return response;
 	}
 

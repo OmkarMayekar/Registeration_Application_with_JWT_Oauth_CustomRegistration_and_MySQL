@@ -49,11 +49,12 @@ public class ApplicationUser implements UserDetails {
 	private boolean isAccountNonLocked;
 	private boolean isCredentialsNonExpired;
 	private boolean isEnabled;
+	private String itemAttributes;
 
 	public ApplicationUser(Long id, String username, String password, String email, ApplicationUserRole role,
 			String uuid, List<String> userList, HashSet<String> grantAcessTo,
 			Set<SimpleGrantedAuthority> grantedAuthorities, boolean isAccountNonExpired, boolean isAccountNonLocked,
-			boolean isCredentialsNonExpired, boolean isEnabled) {
+			boolean isCredentialsNonExpired, boolean isEnabled, String itemAttributtes) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -68,6 +69,7 @@ public class ApplicationUser implements UserDetails {
 		this.isAccountNonLocked = isAccountNonLocked;
 		this.isCredentialsNonExpired = isCredentialsNonExpired;
 		this.isEnabled = isEnabled;
+		this.itemAttributes = itemAttributtes;
 	}
 
 	public ApplicationUser() {
@@ -186,6 +188,14 @@ public class ApplicationUser implements UserDetails {
 		this.userList = userList;
 	}
 
+	public String getItemAttributtes() {
+		return itemAttributes;
+	}
+
+	public void setItemAttributtes(String itemAttributtes) {
+		this.itemAttributes = itemAttributtes;
+	}
+
 	@PrePersist
 	public void autofill() {
 		this.setUuid(UUID.randomUUID().toString());
@@ -197,13 +207,14 @@ public class ApplicationUser implements UserDetails {
 				+ ", role=" + role + ", uuid=" + uuid + ", userList=" + userList + ", grantAcessTo=" + grantAcessTo
 				+ ", grantedAuthorities=" + grantedAuthorities + ", isAccountNonExpired=" + isAccountNonExpired
 				+ ", isAccountNonLocked=" + isAccountNonLocked + ", isCredentialsNonExpired=" + isCredentialsNonExpired
-				+ ", isEnabled=" + isEnabled + ", getId()=" + getId() + ", getUsername()=" + getUsername()
-				+ ", getPassword()=" + getPassword() + ", isAccountNonExpired()=" + isAccountNonExpired()
-				+ ", isAccountNonLocked()=" + isAccountNonLocked() + ", isCredentialsNonExpired()="
-				+ isCredentialsNonExpired() + ", isEnabled()=" + isEnabled() + ", getAuthorities()=" + getAuthorities()
-				+ ", getEmail()=" + getEmail() + ", getRole()=" + getRole() + ", getUuid()=" + getUuid()
-				+ ", getGrantAcessTo()=" + getGrantAcessTo() + ", getUserList()=" + getUserList() + ", getClass()="
-				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
+				+ ", isEnabled=" + isEnabled + ", itemAttributtes=" + itemAttributes + ", getId()=" + getId()
+				+ ", getUsername()=" + getUsername() + ", getPassword()=" + getPassword() + ", isAccountNonExpired()="
+				+ isAccountNonExpired() + ", isAccountNonLocked()=" + isAccountNonLocked()
+				+ ", isCredentialsNonExpired()=" + isCredentialsNonExpired() + ", isEnabled()=" + isEnabled()
+				+ ", getAuthorities()=" + getAuthorities() + ", getEmail()=" + getEmail() + ", getRole()=" + getRole()
+				+ ", getUuid()=" + getUuid() + ", getGrantAcessTo()=" + getGrantAcessTo() + ", getUserList()="
+				+ getUserList() + ", getItemAttributtes()=" + getItemAttributtes() + ", getClass()=" + getClass()
+				+ ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
 	}
 
 }

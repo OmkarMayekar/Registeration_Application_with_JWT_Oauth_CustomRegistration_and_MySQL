@@ -26,6 +26,7 @@ import com.snapshotprojects.Bingofy.enums.HttpStatusCode;
 import com.snapshotprojects.Bingofy.enums.ResponseFlag;
 import com.snapshotprojects.Bingofy.exceptions.ValidationException;
 import com.snapshotprojects.Bingofy.request.ItemsUpdationRequest;
+import com.snapshotprojects.Bingofy.request.JsonObjectRequest;
 import com.snapshotprojects.Bingofy.responses.APIResponse;
 import com.snapshotprojects.Bingofy.responses.ServiceResponse;
 import com.snapshotprojects.Bingofy.services.InventoryService;
@@ -58,14 +59,13 @@ public class InventoriesController {
 		return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), serviceReponseForRegisterUser);
 	}
 
-	@PostMapping("/getInventoryItemsForUser")
+	@PostMapping("/assignExtraAttributesForItems")
 	@ResponseBody
 	@PreAuthorize("hasAuthority('nonadmin:write')")
-	public APIResponse<?> getInventoryItemsForUser(@RequestBody ApplicationUser email, HttpServletResponse httpResponse,
+	public APIResponse<?> assignExtraAttributesForItems(@RequestBody JsonObjectRequest json, HttpServletResponse httpResponse,
 			HttpServletRequest request) throws ValidationException {
-		String userEmail = email.getEmail();
-		Map<String, Object> serviceReponseForGetInventoryItems = inventoryService.retrieveAllItemsForUser(userEmail);
-		return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), serviceReponseForGetInventoryItems);
+		ServiceResponse saveJSONObjectServiceResponse = inventoryService.saveJsonObject(json);
+		return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), saveJSONObjectServiceResponse);
 	}
 
 	@PostMapping("/addNewItemsToUserList")
@@ -83,5 +83,26 @@ public class InventoriesController {
 			return APIResponse.response(HttpStatusCode.INTERNAL_SERVER_ERROR.getOrdinal(), "Technical Error");
 		}
 	}
-
+	
+	@PostMapping("/getAllExtraInventoryAttributes")
+	@ResponseBody
+	@PreAuthorize("hasAuthority('nonadmin:write')")
+	public APIResponse<?> getAllExtraInventoryAttributes(@RequestBody ApplicationUser username,HttpServletResponse httpResponse, HttpServletRequest request)
+			throws ValidationException {
+		String userName = username.getUsername();
+		System.out.println("username in controller ===>"+userName);
+		Map<String, Object> serviceReponseForExtraInventoryAtttributes = inventoryService.getAllExtraInventoryAttributes(userName);
+		return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), serviceReponseForExtraInventoryAtttributes);
+	}
+	
+	@PostMapping("/saveAttributtesForItems")
+	@ResponseBody
+	@PreAuthorize("hasAuthority('nonadmin:write')")
+	public APIResponse<?> getInventoryItemsForUser(@RequestBody ApplicationUser email, HttpServletResponse httpResponse,
+			HttpServletRequest request) throws ValidationException {
+		String userEmail = email.getEmail();
+		Map<String, Object> serviceReponseForGetInventoryItems = inventoryService.retrieveAllItemsForUser(userEmail);
+		return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), serviceReponseForGetInventoryItems);
+	}
+	
 }
