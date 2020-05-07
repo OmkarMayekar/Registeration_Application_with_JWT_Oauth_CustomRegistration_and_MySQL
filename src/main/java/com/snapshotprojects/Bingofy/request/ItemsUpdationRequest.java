@@ -12,30 +12,30 @@ public class ItemsUpdationRequest {
 	@JsonProperty("list_of_items_To_be_added")
 	ArrayList<String> listOfItemsToBeAdded;
 
-	@NotNull(message = "e-mail input incorrect or email cannot be missing/empty")
-	@JsonProperty("email_address")
-	private String email;
+	@NotNull(message = "username input incorrect or username cannot be missing/empty")
+	@JsonProperty("username")
+	private String username;
 
 	public ArrayList<String> getListOfItemsToBeAdded() {
 		return listOfItemsToBeAdded;
 	}
 
-	public void setListOfItemsToBeAdded(ArrayList<String> listAccessignUserEmail) {
-		this.listOfItemsToBeAdded = listAccessignUserEmail;
+	public void setListOfItemsToBeAdded(ArrayList<String> listOfItemsToBeAdded) {
+		this.listOfItemsToBeAdded = listOfItemsToBeAdded;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	@Override
 	public String toString() {
-		return "CustomItemsUtilityClass [listOfItemsToBeAdded=" + listOfItemsToBeAdded + ", email=" + email
-				+ ", getListOfItemsToBeAdded()=" + getListOfItemsToBeAdded() + ", getEmail()=" + getEmail()
+		return "ItemsUpdationRequest [listOfItemsToBeAdded=" + listOfItemsToBeAdded + ", username=" + username
+				+ ", getListOfItemsToBeAdded()=" + getListOfItemsToBeAdded() + ", getUsername()=" + getUsername()
 				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
 				+ "]";
 	}

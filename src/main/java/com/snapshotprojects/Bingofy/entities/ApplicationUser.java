@@ -37,10 +37,11 @@ public class ApplicationUser implements UserDetails {
 	private String email;
 	@Enumerated(EnumType.STRING)
 	private ApplicationUserRole role;
-	private String uuid;
-	@ElementCollection(fetch = FetchType.EAGER)
+	private String uuid;/*
+						 * @ElementCollection(fetch = FetchType.EAGER)
+						 */
 	@Column(name = "user_list")
-	private List<String> userList = new ArrayList<>();
+	private HashSet<String> userList =  new HashSet<>();
 	private HashSet<String> grantAcessTo = new HashSet<>();
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "user_authorities")
@@ -52,7 +53,7 @@ public class ApplicationUser implements UserDetails {
 	private String itemAttributes;
 
 	public ApplicationUser(Long id, String username, String password, String email, ApplicationUserRole role,
-			String uuid, List<String> userList, HashSet<String> grantAcessTo,
+			String uuid, HashSet<String> userList, HashSet<String> grantAcessTo,
 			Set<SimpleGrantedAuthority> grantedAuthorities, boolean isAccountNonExpired, boolean isAccountNonLocked,
 			boolean isCredentialsNonExpired, boolean isEnabled, String itemAttributtes) {
 		super();
@@ -180,11 +181,11 @@ public class ApplicationUser implements UserDetails {
 		this.grantAcessTo = grantAcessTo;
 	}
 
-	public List<String> getUserList() {
+	public HashSet<String> getUserList() {
 		return userList;
 	}
 
-	public void setUserList(List<String> userList) {
+	public void setUserList(HashSet<String> userList) {
 		this.userList = userList;
 	}
 

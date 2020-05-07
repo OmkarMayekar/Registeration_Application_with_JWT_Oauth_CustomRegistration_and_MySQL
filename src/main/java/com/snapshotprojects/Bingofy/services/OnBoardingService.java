@@ -1,6 +1,7 @@
 package com.snapshotprojects.Bingofy.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -76,7 +77,7 @@ public class OnBoardingService {
 		applicationUser.setUsername(username);
 		applicationUser.setPassword(encodedPassword);
 		applicationUser.setEmail(email);
-		applicationUser.setUserList(new ArrayList<String>());
+		applicationUser.setUserList(new HashSet<String>());
 		applicationUser.setAccountNonExpired(true);
 		applicationUser.setAccountNonLocked(true);
 		applicationUser.setCredentialsNonExpired(true);

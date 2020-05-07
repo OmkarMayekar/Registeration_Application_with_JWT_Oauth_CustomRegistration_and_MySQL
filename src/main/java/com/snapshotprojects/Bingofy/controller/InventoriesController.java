@@ -58,6 +58,15 @@ public class InventoriesController {
 		List<Map<String, Object>> serviceReponseForRegisterUser = inventoryService.retrieveAllAttributes();
 		return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), serviceReponseForRegisterUser);
 	}
+	
+	@PostMapping("/getAllItems")
+	@ResponseBody
+	@PreAuthorize("hasAuthority('nonadmin:write')")
+	public APIResponse<?> getAllItems(@RequestBody ApplicationUser username,HttpServletResponse httpResponse, HttpServletRequest request)
+			throws ValidationException {
+		Map<String, Object> serviceReponseForRegisterUser = inventoryService.retrieveAllItems(username);
+		return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), serviceReponseForRegisterUser);
+	}
 
 	@PostMapping("/assignExtraAttributesForItems")
 	@ResponseBody
@@ -75,6 +84,22 @@ public class InventoriesController {
 			HttpServletResponse httpResponse, HttpServletRequest request) {
 		try {
 			addItemServiceResponse = inventoryService.addItemsToUserList(itemsUpdationRequest);
+			if (addItemServiceResponse.getserviceFlag() == ResponseFlag.USER_NOT_PRESENT) {
+				return APIResponse.response(HttpStatusCode.UNAUTHORIZED.getOrdinal(), addItemServiceResponse);
+			}
+			return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), addItemServiceResponse);
+		} catch (Exception e) {
+			return APIResponse.response(HttpStatusCode.INTERNAL_SERVER_ERROR.getOrdinal(), "Technical Error");
+		}
+	}
+	
+	@PostMapping("/removeItemsFromUserList")
+	@ResponseBody
+	@PreAuthorize("hasAuthority('nonadmin:write')")
+	public APIResponse<?> removeItemsFromUserList(@Valid @RequestBody ItemsUpdationRequest itemsUpdationRequest,
+			HttpServletResponse httpResponse, HttpServletRequest request) {
+		try {
+			addItemServiceResponse = inventoryService.removeItemsFromUserList(itemsUpdationRequest);
 			if (addItemServiceResponse.getserviceFlag() == ResponseFlag.USER_NOT_PRESENT) {
 				return APIResponse.response(HttpStatusCode.UNAUTHORIZED.getOrdinal(), addItemServiceResponse);
 			}

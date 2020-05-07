@@ -2,6 +2,7 @@ package com.snapshotprojects.Bingofy.services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -45,21 +46,50 @@ public class InventoryService {
 		return list;
 	}
 
+	public Map<String, Object> retrieveAllItems(ApplicationUser username) {
+		Map<String, Object> responseMap = new HashMap<>();
+		ServiceResponse response = null;
+		String userName = null;
+		HashSet<String> userList = new HashSet<String>();
+		try {
+			userName = username.getUsername();
+			ApplicationUser user = null;
+			System.out.println("retrieveAllItems username is : " + username);
+			user = userRepository.findByUsername(userName);
+			if (user == null) {
+				response = customResponseUtilityClass.buildUserNotPresentResponse();
+				responseMap.put("response", response);
+				responseMap.put("itemslist", new ArrayList<String>());
+			} else {
+				response = customResponseUtilityClass.buildSuccessReponseForGetItemsForUsers();
+				userList = user.getUserList();
+				responseMap.put("response", response);
+				responseMap.put("itemslist", userList);
+			}
+		} catch (NullPointerException e) {
+			System.out.println("NullPointer Exception in InventoryService :: addItemsToUserList method : " + e);
+			response = customResponseUtilityClass.buildUserNotPresentResponse();
+		} catch (Exception e) {
+			System.out.println("Exception in InventoryService :: addItemsToUserList method : " + e);
+			response = customResponseUtilityClass.buildErrorResponseForItemsUpdation();
+		}
+		return responseMap;
+	}
+
 	public ServiceResponse addItemsToUserList(ItemsUpdationRequest itemsUpdationRequest) {
 		try {
 			ApplicationUser user = null;
-			List<String> listToBeUpdated = new ArrayList<String>();
+			HashSet<String> listToBeUpdated = new HashSet<String>();
 			ArrayList<String> listOfItemsToBeAdded = itemsUpdationRequest.getListOfItemsToBeAdded();
-			String userEmail = itemsUpdationRequest.getEmail();
+			String userName = itemsUpdationRequest.getUsername();
 			System.out.println("listOfItemsToBeAdded list of items is : " + listOfItemsToBeAdded);
-			System.out.println("listOfItemsToBeAdded username is : " + userEmail);
-			user = userRepository.findByEmail(userEmail);
+			System.out.println("listOfItemsToBeAdded username is : " + userName);
+			user = userRepository.findByUsername(userName);
 			if (user == null) {
 				response = customResponseUtilityClass.buildUserNotPresentResponse();
 			}
 			System.out.println("user in method :: addItemsToUserList is : " + user);
 			listToBeUpdated = user.getUserList();
-			System.out.println("listToBeUpdated is : " + listToBeUpdated);
 			listToBeUpdated.addAll(listOfItemsToBeAdded);
 			System.out.println("List after updation : " + listToBeUpdated);
 			user.setUserList(listToBeUpdated);
@@ -78,9 +108,42 @@ public class InventoryService {
 		return response;
 	}
 
+	public ServiceResponse removeItemsFromUserList(ItemsUpdationRequest itemsUpdationRequest) {
+		try {
+			ApplicationUser user = null;
+			HashSet<String> listToBeUpdated = new HashSet<String>();
+			ArrayList<String> listOfItemsToBeRemoved = itemsUpdationRequest.getListOfItemsToBeAdded();
+			String userName = itemsUpdationRequest.getUsername();
+			System.out.println("listOfItemsToBeRemoved list of items is : " + listOfItemsToBeRemoved);
+			System.out.println("listOfItemsToBeRemoved username is : " + userName);
+			user = userRepository.findByUsername(userName);
+			if (user == null) {
+				response = customResponseUtilityClass.buildUserNotPresentResponse();
+			}
+			System.out.println("user in method :: removeItemsFromUserList is : " + user);
+			listToBeUpdated = user.getUserList();
+			System.out.println("listToBeUpdated is : " + listToBeUpdated);
+			listToBeUpdated.removeAll(listOfItemsToBeRemoved);
+			System.out.println("List after updation : " + listToBeUpdated);
+			user.setUserList(listToBeUpdated);
+			System.out.println("listToBeUpdated after removing new Items is : " + listToBeUpdated);
+			System.out.println("New user object created is : " + user);
+			userRepository.save(user);
+			response = customResponseUtilityClass.buildSuccessReponseForItemsUpdation();
+			return response;
+		} catch (NullPointerException e) {
+			System.out.println("NullPointer Exception in InventoryService :: addItemsToUserList method : " + e);
+			response = customResponseUtilityClass.buildUserNotPresentResponse();
+		} catch (Exception e) {
+			System.out.println("Exception in InventoryService :: addItemsToUserList method : " + e);
+			response = customResponseUtilityClass.buildErrorResponseForItemsUpdation();
+		}
+		return response;
+	}
+
 	public Map<String, Object> retrieveAllItemsForUser(String email) {
 		ApplicationUser userObject = new ApplicationUser();
-		List<String> userList = new ArrayList<>();
+		HashSet<String> userList = new HashSet<>();
 		Map<String, Object> responseMap = new HashMap<>();
 		userObject = userRepository.findByEmail(email);
 		if (userObject == null) {
@@ -110,7 +173,7 @@ public class InventoryService {
 			response = customResponseUtilityClass.buildUserNotPresentResponse();
 		} else {
 			previousJSONData = userObject.getItemAttributtes();
-			System.out.println("previousJSONData=====>"+previousJSONData.isBlank());
+			System.out.println("previousJSONData=====>" + previousJSONData.isBlank());
 			newJSONData = json.getJson();
 			if (previousJSONData.isBlank()) {
 				updatedJSONData = newJSONData;
@@ -126,11 +189,11 @@ public class InventoryService {
 
 	public Map<String, Object> getAllExtraInventoryAttributes(String username) {
 		ApplicationUser userObject = new ApplicationUser();
-		Map<String, Object> responseMap =  new HashMap<String, Object> ();
+		Map<String, Object> responseMap = new HashMap<String, Object>();
 		ServiceResponse response = null;
 		String jsonResult = null;
 		userObject = userRepository.findByUsername(username);
-		System.out.println("UserObject in service====>"+userObject);
+		System.out.println("UserObject in service====>" + userObject);
 		if (userObject == null) {
 			response = customResponseUtilityClass.buildUserNotPresentResponse();
 			jsonResult = "";
