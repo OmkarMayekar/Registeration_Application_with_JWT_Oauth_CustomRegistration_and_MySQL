@@ -21,6 +21,12 @@ public enum ResponseFlag {
 	INTERNAL_ERROR("Internal error"),
 	UNKNOWN("UNKNOWN"),
 	DATABASE_UPDATED("Database Updated Successfully"),
+	RECIPE_ADDED_SUCCESSFULLY("Recipe added successfully"),
+	RECIPE_ADDED_UNSUCCESSFULLY("Recipe was not added successfully"),
+	RECIPE_RETRIEVED_SUCCESSFULLY("Recipe retrieved successfully"),
+	RECIPE_RETRIEVED_UNSUCCESSFULLY("Recipe was not retrieved successfully"),
+	FEEDBACK_SENT_SUCCESSFULLY("Feedback was sent"),
+	FEEDBACK_SENT_UNSUCCESSFULLY("Feedback was not sent"),
 	JSON_RETRIVED("Json Retrived");
 
 	private String serviceResponseFlag;

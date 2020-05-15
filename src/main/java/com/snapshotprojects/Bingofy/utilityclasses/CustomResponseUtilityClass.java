@@ -89,4 +89,46 @@ public class CustomResponseUtilityClass {
 		return response;
 	}
 
+	public ServiceResponse buildSuccessResponseForAddRecipesService() {
+		response.setStatusCode(HttpStatusCode.CREATED.getOrdinal());
+		response.setserviceFlag(ResponseFlag.RECIPE_ADDED_SUCCESSFULLY);
+		response.setErrorMessage("");
+		return response;
+	}
+	
+	public ServiceResponse buildErrorResponseForAddRecipeService() {
+		response.setStatusCode(HttpStatusCode.NOT_ACCEPTABLE.getOrdinal());
+		response.setserviceFlag(ResponseFlag.RECIPE_ADDED_UNSUCCESSFULLY);
+		response.setErrorMessage(ResponseFlag.RECIPE_ADDED_UNSUCCESSFULLY.name());
+		return response;
+	}
+	
+	public ServiceResponse buildSuccessResponseForSendFeedbackService() {
+		response.setStatusCode(HttpStatusCode.CREATED.getOrdinal());
+		response.setserviceFlag(ResponseFlag.FEEDBACK_SENT_SUCCESSFULLY);
+		response.setErrorMessage("");
+		return response;
+	}
+	
+	public ServiceResponse buildErrorResponseForSendFeedbackService() {
+		response.setStatusCode(HttpStatusCode.NOT_ACCEPTABLE.getOrdinal());
+		response.setserviceFlag(ResponseFlag.FEEDBACK_SENT_UNSUCCESSFULLY);
+		response.setErrorMessage(ResponseFlag.FEEDBACK_SENT_UNSUCCESSFULLY.name());
+		return response;
+	}
+	
+	public ServiceResponse buildSuccessResponseForGetRecipesService() {
+		response.setStatusCode(HttpStatusCode.SUCCESS.getOrdinal());
+		response.setserviceFlag(ResponseFlag.RECIPE_RETRIEVED_SUCCESSFULLY);
+		response.setErrorMessage("");
+		return response;
+	}
+	
+	public ServiceResponse buildErrorResponseForGetRecipeService() {
+		response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getOrdinal());
+		response.setserviceFlag(ResponseFlag.RECIPE_RETRIEVED_UNSUCCESSFULLY);
+		response.setErrorMessage(ResponseFlag.RECIPE_RETRIEVED_UNSUCCESSFULLY.name());
+		return response;
+	}
+
 }
