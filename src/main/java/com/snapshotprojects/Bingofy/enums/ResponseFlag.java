@@ -27,6 +27,8 @@ public enum ResponseFlag {
 	RECIPE_RETRIEVED_UNSUCCESSFULLY("Recipe was not retrieved successfully"),
 	FEEDBACK_SENT_SUCCESSFULLY("Feedback was sent"),
 	FEEDBACK_SENT_UNSUCCESSFULLY("Feedback was not sent"),
+	COUNT_ADDED_SUCCESSFULLY("Count added successfully"),
+	COUNT_NOT_ADDED("Count was not added"),
 	JSON_RETRIVED("Json Retrived");
 
 	private String serviceResponseFlag;

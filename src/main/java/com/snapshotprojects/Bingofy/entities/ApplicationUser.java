@@ -56,11 +56,11 @@ public class ApplicationUser implements UserDetails {
 	private String itemAttributes;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Recipe> recipe;
-
+	private int feedBackCount;
 	public ApplicationUser(Long id, String username, String password, String email, ApplicationUserRole role,
 			String uuid, HashSet<String> userList, HashSet<String> grantAcessTo,
 			Set<SimpleGrantedAuthority> grantedAuthorities, boolean isAccountNonExpired, boolean isAccountNonLocked,
-			boolean isCredentialsNonExpired, boolean isEnabled, String itemAttributtes, Set<Recipe> recipe) {
+			boolean isCredentialsNonExpired, boolean isEnabled, String itemAttributtes, Set<Recipe> recipe,int feedBackCount) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -77,6 +77,7 @@ public class ApplicationUser implements UserDetails {
 		this.isEnabled = isEnabled;
 		this.itemAttributes = itemAttributtes;
 		this.recipe = recipe;
+		this.feedBackCount =  feedBackCount;
 	}
 
 	public ApplicationUser() {
@@ -216,25 +217,11 @@ public class ApplicationUser implements UserDetails {
 		this.recipe = recipe;
 	}
 
-	/*
-	 * @Override public String toString() { return "ApplicationUser [id=" + id +
-	 * ", username=" + username + ", password=" + password + ", email=" + email +
-	 * ", role=" + role + ", uuid=" + uuid + ", userList=" + userList +
-	 * ", grantAcessTo=" + grantAcessTo + ", grantedAuthorities=" +
-	 * grantedAuthorities + ", isAccountNonExpired=" + isAccountNonExpired +
-	 * ", isAccountNonLocked=" + isAccountNonLocked + ", isCredentialsNonExpired=" +
-	 * isCredentialsNonExpired + ", isEnabled=" + isEnabled + ", itemAttributes=" +
-	 * itemAttributes + ", recipe=" + recipe + ", getId()=" + getId() +
-	 * ", getUsername()=" + getUsername() + ", getPassword()=" + getPassword() +
-	 * ", isAccountNonExpired()=" + isAccountNonExpired() +
-	 * ", isAccountNonLocked()=" + isAccountNonLocked() +
-	 * ", isCredentialsNonExpired()=" + isCredentialsNonExpired() + ", isEnabled()="
-	 * + isEnabled() + ", getAuthorities()=" + getAuthorities() + ", getEmail()=" +
-	 * getEmail() + ", getRole()=" + getRole() + ", getUuid()=" + getUuid() +
-	 * ", getGrantAcessTo()=" + getGrantAcessTo() + ", getUserList()=" +
-	 * getUserList() + ", getItemAttributtes()=" + getItemAttributtes() +
-	 * ", getRecipe()=" + getRecipe() + ", getClass()=" + getClass() +
-	 * ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]"; }
-	 */
+	public int getFeedBackCount() {
+		return feedBackCount;
+	}
 
+	public void setFeedBackCount(int feedBackCount) {
+		this.feedBackCount = feedBackCount;
+	}
 }
