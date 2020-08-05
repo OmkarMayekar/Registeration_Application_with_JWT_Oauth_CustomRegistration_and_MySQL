@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.snapshotprojects.Bingofy.entities.ApplicationUser;
 import com.snapshotprojects.Bingofy.enums.HttpStatusCode;
 import com.snapshotprojects.Bingofy.exceptions.ValidationException;
-import com.snapshotprojects.Bingofy.request.AddFeedbackCount;
 import com.snapshotprojects.Bingofy.request.AddRecipeRequest;
 import com.snapshotprojects.Bingofy.request.SendFeedbackRequest;
 import com.snapshotprojects.Bingofy.responses.APIResponse;
@@ -49,7 +48,7 @@ public class OperationsController {
 	}
 	
 	@PostMapping("/addUserToMyList")
-	@PreAuthorize("hasAuthority('nonadmin:read')")
+	@PreAuthorize("hasAuthority('nonadmin:write')")
 	@ResponseBody
 	public APIResponse<?> addUserToMyList(@Valid @RequestBody ListOfAccessingUsersEmail listAccessignUserEmail,
 			HttpServletResponse httpResponse, HttpServletRequest request) throws Exception {
@@ -63,23 +62,6 @@ public class OperationsController {
 		} catch (ValidationException e) {
 			httpResponse.setStatus(e.getHttpCode());
 			return APIResponse.response(e.getHttpCode(), new ErrorResponse(e.getMessage()));
-		}
-	}
-	
-	@PostMapping("/addFeedbackCount")
-	@PreAuthorize("hasAuthority('nonadmin:write')")
-	@ResponseBody
-	public APIResponse<?> addFeedbackCount(@Valid @RequestBody AddFeedbackCount addFeedbackCount,
-			HttpServletResponse httpResponse, HttpServletRequest request) throws Exception {
-		try {
-			ServiceResponse serviceReponseForassignListToAnotherUsers = operationsService
-					.addFeedbackCount(addFeedbackCount);
-			return APIResponse.response(serviceReponseForassignListToAnotherUsers.getStatusCode(),
-					serviceReponseForassignListToAnotherUsers);
-
-		} catch (Exception e) {
-			httpResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.ordinal());
-			return APIResponse.response(HttpStatus.INTERNAL_SERVER_ERROR.ordinal(), new ErrorResponse(e.getMessage()));
 		}
 	}
 	

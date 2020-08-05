@@ -117,20 +117,6 @@ public class CustomResponseUtilityClass {
 		return response;
 	}
 	
-	public ServiceResponse buildSuccessResponseForAddCountService() {
-		response.setStatusCode(HttpStatusCode.CREATED.getOrdinal());
-		response.setserviceFlag(ResponseFlag.COUNT_ADDED_SUCCESSFULLY);
-		response.setErrorMessage("");
-		return response;
-	}
-	
-	public ServiceResponse buildErrorResponseForAddCountService() {
-		response.setStatusCode(HttpStatusCode.NOT_ACCEPTABLE.getOrdinal());
-		response.setserviceFlag(ResponseFlag.COUNT_NOT_ADDED);
-		response.setErrorMessage(ResponseFlag.COUNT_NOT_ADDED.name());
-		return response;
-	}
-	
 	public ServiceResponse buildSuccessResponseForGetRecipesService() {
 		response.setStatusCode(HttpStatusCode.SUCCESS.getOrdinal());
 		response.setserviceFlag(ResponseFlag.RECIPE_RETRIEVED_SUCCESSFULLY);

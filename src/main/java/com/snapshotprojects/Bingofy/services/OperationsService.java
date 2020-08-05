@@ -9,13 +9,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +21,22 @@ import com.snapshotprojects.Bingofy.enums.HttpStatusCode;
 import com.snapshotprojects.Bingofy.exceptions.ValidationException;
 import com.snapshotprojects.Bingofy.repositories.RecipeRepository;
 import com.snapshotprojects.Bingofy.repositories.UserRepository;
-import com.snapshotprojects.Bingofy.request.AddFeedbackCount;
 import com.snapshotprojects.Bingofy.request.AddRecipeRequest;
 import com.snapshotprojects.Bingofy.request.SendFeedbackRequest;
 import com.snapshotprojects.Bingofy.responses.GetRecipeResponse;
 import com.snapshotprojects.Bingofy.responses.ServiceResponse;
 import com.snapshotprojects.Bingofy.utilityclasses.CustomResponseUtilityClass;
 import com.snapshotprojects.Bingofy.utilityclasses.ListOfAccessingUsersEmail;
+import java.io.UnsupportedEncodingException;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 @Service
 public class OperationsService {
@@ -60,6 +62,8 @@ public class OperationsService {
 			ArrayList<String> accessingUsersEmailList = listAccessignUserEmail.getListAccessignUserEmail();
 			ApplicationUser ownerUser = null;
 			ArrayList<String> accessingUsersUUIDList = new ArrayList<>();
+			HashSet<String> ownerUserGrantAccessToSet = new HashSet<>();
+			HashSet<String> ownerUserGrantAccessToSetBeforeUpdatingValues = new HashSet<>();
 			System.out.println("ownerUserEmail ===>" + ownerUserEmail);
 			System.out.println("acessingUserEmailList===>" + accessingUsersEmailList);
 			if (ownerUserEmail != null) {
@@ -69,19 +73,29 @@ public class OperationsService {
 			if (!accessingUsersEmailList.isEmpty()) {
 				ListIterator<String> itr = accessingUsersEmailList.listIterator();
 				while (itr.hasNext()) {
-					HashSet<String> oldGrantAccessSet = new HashSet<>();
-					HashSet<String> uuidSet = new HashSet<>();
 					String email = (String) itr.next();
 					// GETTING THE ACCESSING USER OBJECT FROM DB FOR UUID RETRIVAL.
 					ApplicationUser accessingUser = userRepository.findByEmail(email);
-					oldGrantAccessSet = accessingUser.getGrantAcessTo();
-					oldGrantAccessSet.add(ownerUser.getUuid());
-					uuidSet.addAll(oldGrantAccessSet);
-					accessingUser.setGrantAcessTo(uuidSet);
-					userRepository.save(accessingUser);
 					// ADDING THE RETRIVED UUID FROM USERS INTO ARRAYLIST.
 					accessingUsersUUIDList.add(accessingUser.getUuid());
 				}
+			}
+			System.out.println("ACCESSING_USERS_WHO_ARE_NOW_GIVEN_ACCESS_TO_OWNER'S_LIST_ARE::UUID_LIST =====> "
+					+ accessingUsersUUIDList);
+			ownerUserGrantAccessToSet = ownerUser.getGrantAcessTo();
+			ownerUserGrantAccessToSetBeforeUpdatingValues = ownerUserGrantAccessToSet;
+			System.out.println("ownerUserGrantAccessToSetBeforeUpdatingValues===>"
+					+ ownerUserGrantAccessToSetBeforeUpdatingValues);
+			ownerUserGrantAccessToSet.addAll(accessingUsersUUIDList);
+			ownerUser.setGrantAcessTo(ownerUserGrantAccessToSet);
+			// Update the GrantAccess Set of Owner
+			ApplicationUser updatedApplicationUser = userRepository.save(ownerUser);
+			HashSet<String> ownerUserGrantAccessToSetAfterUpdatingValues = updatedApplicationUser.getGrantAcessTo();
+			System.out.println(
+					"ownerUserGrantAccessToSetAfterUpdatingValues===>" + ownerUserGrantAccessToSetAfterUpdatingValues);
+			if (ownerUserGrantAccessToSetAfterUpdatingValues.toArray()
+					.equals(ownerUserGrantAccessToSetBeforeUpdatingValues.toArray())) {
+				System.out.println("OWNER USER LIST SHARING WAS UPDATED AND HE NEEDS TO BE NOTIFIED");
 			}
 			response = customResponseUtilityClass.buildSuccessResponseForOperationsService();
 		} catch (Exception e) {
@@ -209,32 +223,14 @@ public class OperationsService {
 		String feedbackContent = null;
 		String username = null;
 		ApplicationUser user = null;
-		int previousFeedBackCount = 0;
-		int newFeedBackCount = 0;
-		boolean feedBackCountWarning = false;
 		try {
 			username = sendFeedbackRequest.getUsername();
 			feedbackContent = sendFeedbackRequest.getFeedback();
 			user = userRepository.findByUsername(username);
-			previousFeedBackCount = user.getFeedBackCount();
-			newFeedBackCount = previousFeedBackCount - 1;
-			user.setFeedBackCount(newFeedBackCount);
-			userRepository.save(user);
-			if (user != null && newFeedBackCount > 0)
-			{
-				if(newFeedBackCount == 1)
-				{
-					feedBackCountWarning = true;
-					sendEmail(username, feedbackContent,feedBackCountWarning);//the flag denotes that the feedback count is low for that user
-				}
-				else
-				{
-					sendEmail(username, feedbackContent,feedBackCountWarning);//the flag denotes that the feedback count is not low for that user
-				}
-				response = customResponseUtilityClass.buildSuccessResponseForSendFeedbackService();
-			} else {
-				response = customResponseUtilityClass.buildErrorResponseForSendFeedbackService();
+			if (user != null) {
+				sendEmail(username, feedbackContent);
 			}
+			response = customResponseUtilityClass.buildSuccessResponseForSendFeedbackService();
 		} catch (Exception e) {
 			System.out.println("Exception occured in sendFeedback Method " + e);
 			response = customResponseUtilityClass.buildErrorResponseForSendFeedbackService();
@@ -242,7 +238,7 @@ public class OperationsService {
 		return response;
 	}
 
-	public void sendEmail(String username, String feedbackContent,boolean feedBackCountWarning) {
+	public void sendEmail(String username, String feedbackContent) {
 		final String gmailUsername = "mayekarom27@gmail.com";
 		final String gmailPassword = "Omkar750601895666527";
 
@@ -261,16 +257,13 @@ public class OperationsService {
 				return new PasswordAuthentication(gmailUsername, gmailPassword);
 			}
 		});
+
 		try {
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress("mayekarom27@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("mayekarom27@gmail.com"));
 			message.setSubject("================ Bingofy User Feedback ============= Username :- " + username);
-			if(feedBackCountWarning == true)
-			{
-				message.setText("THIS IS LAST FEEDBACK ::: The Content of the feedback is :- " + feedbackContent);
-			}
-			message.setText("The Content of the feedback is :- " + feedbackContent);
+			message.setText("The Content of the feedback is :- "+feedbackContent);
 
 			Transport.send(message);
 
@@ -280,24 +273,6 @@ public class OperationsService {
 			throw new RuntimeException(e);
 		}
 
-	}
-
-	public ServiceResponse addFeedbackCount(@Valid AddFeedbackCount addFeedbackCount) {
-		String username = null;
-		ApplicationUser user = null;
-		int countToBeAdded = 0;
-		username = addFeedbackCount.getUsername();
-		countToBeAdded = addFeedbackCount.getCountToBeAdded();
-		try {
-			user = userRepository.findByUsername(username);
-			user.setFeedBackCount(countToBeAdded);
-			userRepository.save(user);
-			response = customResponseUtilityClass.buildSuccessResponseForAddCountService();
-		} catch (Exception e) {
-			System.out.println("Exception occured in sendFeedback Method " + e);
-			response = customResponseUtilityClass.buildErrorResponseForAddCountService();
-		}
-		return response;
 	}
 
 	public void validateAddUserToMyListRequest(ListOfAccessingUsersEmail listAccessignUserEmail, String ownerUserEmail)

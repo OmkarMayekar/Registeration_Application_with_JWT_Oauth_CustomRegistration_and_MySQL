@@ -3,9 +3,7 @@ package com.snapshotprojects.Bingofy.services;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,50 +71,6 @@ public class InventoryService {
 			response = customResponseUtilityClass.buildUserNotPresentResponse();
 		} catch (Exception e) {
 			System.out.println("Exception in InventoryService :: addItemsToUserList method : " + e);
-			response = customResponseUtilityClass.buildErrorResponseForItemsUpdation();
-		}
-		return responseMap;
-	}
-	
-	public Map<String, Object> retrieveAllCommonItems(ApplicationUser username) {
-		Map<String, Object> responseMap = new HashMap<>();
-		ServiceResponse response = null;
-		String userName = null;
-		Map<String,HashSet> usernameWithList = new HashMap<String, HashSet>();
-		HashSet<String> sharingUserList =  null;
-		try {
-			userName = username.getUsername();
-			ApplicationUser user = null;
-			System.out.println("retrieveAllCommonItems username is : " + username.getUsername());
-			user = userRepository.findByUsername(userName);
-			if (user == null) {
-				System.out.println("user is null");
-				response = customResponseUtilityClass.buildUserNotPresentResponse();
-				responseMap.put("response", response);
-				responseMap.put("itemslist", new ArrayList<String>());
-			} else {
-				response = customResponseUtilityClass.buildSuccessReponseForGetItemsForUsers();
-				sharingUserList = user.getGrantAcessTo();
-				System.out.println("UUID of sharingUserList ====> "+sharingUserList);
-				Iterator<String> ltr = sharingUserList.iterator();
-				while(ltr.hasNext())
-				{	
-					HashSet<String> itemList = new HashSet<String>();
-					String sharingusername = ltr.next();
-					ApplicationUser sharinguser = userRepository.findUserByUUID(sharingusername);
-					System.out.println("username of sharinguser =====>"+sharinguser.getUsername());
-					itemList.addAll(sharinguser.getUserList());
-					System.out.println("itemList =====>"+itemList);
-					usernameWithList.put(sharinguser.getUsername(), itemList);
-				}
-				responseMap.put("response", response);
-				responseMap.put("user_with_list_of_items", usernameWithList);
-			}
-		} catch (NullPointerException e) {
-			System.out.println("NullPointer Exception in InventoryService :: retrieveAllCommonItems method : " + e);
-			response = customResponseUtilityClass.buildUserNotPresentResponse();
-		} catch (Exception e) {
-			System.out.println("Exception in InventoryService :: retrieveAllCommonItems method : " + e);
 			response = customResponseUtilityClass.buildErrorResponseForItemsUpdation();
 		}
 		return responseMap;

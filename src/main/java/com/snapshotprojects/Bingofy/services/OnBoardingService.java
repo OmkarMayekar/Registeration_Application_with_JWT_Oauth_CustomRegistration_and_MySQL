@@ -83,7 +83,6 @@ public class OnBoardingService {
 		applicationUser.setCredentialsNonExpired(true);
 		applicationUser.setEnabled(true);
 		applicationUser.setRole(role);
-		applicationUser.setFeedBackCount(4);
 		return applicationUser;
 	}
 

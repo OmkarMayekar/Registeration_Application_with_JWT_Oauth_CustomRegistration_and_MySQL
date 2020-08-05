@@ -61,19 +61,10 @@ public class InventoriesController {
 	
 	@PostMapping("/getAllItems")
 	@ResponseBody
-	@PreAuthorize("hasAuthority('nonadmin:read')")
+	@PreAuthorize("hasAuthority('nonadmin:write')")
 	public APIResponse<?> getAllItems(@RequestBody ApplicationUser username,HttpServletResponse httpResponse, HttpServletRequest request)
 			throws ValidationException {
 		Map<String, Object> serviceReponseForRegisterUser = inventoryService.retrieveAllItems(username);
-		return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), serviceReponseForRegisterUser);
-	}
-	
-	@PostMapping("/getAllCommonItems")
-	@ResponseBody
-	@PreAuthorize("hasAuthority('nonadmin:read')")
-	public APIResponse<?> retrieveAllCommonItems(@RequestBody ApplicationUser username,HttpServletResponse httpResponse, HttpServletRequest request)
-			throws ValidationException {
-		Map<String, Object> serviceReponseForRegisterUser = inventoryService.retrieveAllCommonItems(username);
 		return APIResponse.response(HttpStatusCode.SUCCESS.getOrdinal(), serviceReponseForRegisterUser);
 	}
 
@@ -88,7 +79,7 @@ public class InventoriesController {
 
 	@PostMapping("/addNewItemsToUserList")
 	@ResponseBody
-	@PreAuthorize("hasAuthority('nonadmin:read')")
+	@PreAuthorize("hasAuthority('nonadmin:write')")
 	public APIResponse<?> addNewItemsToUserList(@Valid @RequestBody ItemsUpdationRequest itemsUpdationRequest,
 			HttpServletResponse httpResponse, HttpServletRequest request) {
 		try {
