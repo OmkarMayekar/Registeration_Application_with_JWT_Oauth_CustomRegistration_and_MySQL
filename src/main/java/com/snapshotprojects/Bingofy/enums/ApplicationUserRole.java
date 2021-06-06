@@ -13,7 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.google.common.collect.Sets;
 
 public enum ApplicationUserRole {
-	NONADMIN(Sets.newHashSet(NONADMIN_READ, COURSE_READ)), ADMIN(Sets.newHashSet(COURSE_READ, COURSE_WRITE, NONADMIN_READ, NONADMIN_WRITE)),
+	NONADMIN(Sets.newHashSet(NONADMIN_READ, COURSE_READ,NONADMIN_WRITE)), ADMIN(Sets.newHashSet(COURSE_READ, COURSE_WRITE, NONADMIN_READ, NONADMIN_WRITE)),
 	ADMINTRAINEE(Sets.newHashSet(COURSE_READ, NONADMIN_READ));
 
 	private final Set<ApplicationUserPermission> permissions;
